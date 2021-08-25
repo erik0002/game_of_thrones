@@ -4,12 +4,15 @@ import GotService from "../../services/gotService";
 import Spinner from "../spinner/spinner";
 import ErrorMessage from "../errorMessage/errorMessage";
 
+
 export default class RandomChar extends Component {
 
-    constructor() {
-        super();
-        this.updateCharecter();
-    }
+    // constructor() {
+    //     super();
+    //
+    //     console.log('constructor');
+    //     this.onToggleCharacter = this.onToggleCharacter.bind(this);
+    // }
 
     gotService = new GotService();
 
@@ -17,6 +20,16 @@ export default class RandomChar extends Component {
         char: {},
         loading: true,
         error: false
+    }
+
+    componentDidMount() {
+        this.updateCharacter();
+        this.timeId = setInterval(this.updateCharacter, 3000);
+    }
+
+    componentWillUnmount() {
+        console.log('unmounting');
+        clearInterval(this.timeId);
     }
 
     onCharLoaded = (char) => {
@@ -33,8 +46,8 @@ export default class RandomChar extends Component {
         })
     }
 
-    updateCharecter(){
-        const id = Math.floor(Math.random()*140 + 30);
+    updateCharacter = () => {
+        const id = Math.floor(Math.random()*300 + 30); // 30 - 330
         //const id = 1333000;
         this.gotService.getCharacter(id)
             .then(this.onCharLoaded)
@@ -42,18 +55,21 @@ export default class RandomChar extends Component {
     }
 
     render() {
-
-        const { char , loading, error } = this.state;
+        console.log('rendrer');
+        const { char , loading, error} = this.state;
 
         const errorMessage = error ? <ErrorMessage/> : null;
         const spinner = loading ? <Spinner/> : null;
-        const content = !(loading || error)  ? <View char={char}/> : null;
+        const content = !(loading || error) ? <View char={char}/> : null;
+
 
         return (
-            <div className="random-block rounded">
-                {errorMessage}
-                {spinner}
-                {content}
+            <div>
+                <div className="random-block rounded">
+                    {errorMessage}
+                    {spinner}
+                    {content}
+                </div>
             </div>
         );
     }
