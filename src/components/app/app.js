@@ -4,9 +4,13 @@ import Header from '../header';
 import RandomChar from '../randomChar';
 import ErrorMessage from "../errorMessage/errorMessage";
 import CharacterPage from "../characterPage/characterPage";
-import ItemList from "../itemList";
-import CharDetails from "../charDetails";
+//import ItemList from "../itemList";
+//import CharDetails from "../charDetails";
 import GotService from "../../services/gotService";
+import {BrowserRouter as Router, Route} from "react-router-dom";
+import BooksPage from "../booksPage/booksPage";
+import HousePage from "../housesPage/housePage";
+import BookItem from "../BooksItem/BookItem";
 
 
 export default class App extends Component {
@@ -41,49 +45,38 @@ export default class App extends Component {
         }
 
         return (
-            <>
-                <Container>
-                    <Header />
-                </Container>
-                <Container>
-                    <Row className="mb-2">
-                        <Col lg={{size: 5, offset: 0}}>
-                            {char}
-                            <button
-                                className="btn btn-info"
-                                onClick={this.toggleRandomChar}
-                            > Toggle random character
-                            </button>
+            <Router>
+                <div className="app">
+                    <Container>
+                        <Header />
+                    </Container>
+                    <Container>
+                        <Row className="mb-2">
+                            <Col lg={{size: 5, offset: 0}}>
+                                {char}
+                                <button
+                                    className="btn btn-info"
+                                    onClick={this.toggleRandomChar}
+                                > Toggle random character
+                                </button>
 
-                        </Col>
-                    </Row>
-                    <CharacterPage/>
-                    <Row>
-                        <Col md='6'>
-                            <ItemList
-                                onCharSelected = {this.onCharSelected}
-                                getData = {this.GotService.getAllBooks}
-                                renderItem = {(item) => (item.name)}
-                            />
-                        </Col>
-                        <Col md='6'>
-                            <CharDetails charId = {this.state.selectedChar} />
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col md='6'>
-                            <ItemList
-                                onCharSelected = {this.onCharSelected}
-                                getData = {this.GotService.getAllHouses}
-                                renderItem = {(item) => `${item.name}`}
-                            />
-                        </Col>
-                        <Col md='6'>
-                            <CharDetails charId = {this.state.selectedChar} />
-                        </Col>
-                    </Row>
-                </Container>
-            </>
+                            </Col>
+                        </Row>
+                        <Route path="/" exact component={() => <h1>Welcome to GOT DB</h1>}/>
+                        <Route path="/characters" component={CharacterPage}/>
+                        <Route path="/houses" component={HousePage}/>
+                        <Route path="/books" exact component={BooksPage}/>
+                        <Route path="/books/:id" render={
+                            ({match}) => {
+                                const {id} = match.params;
+
+                                return <BookItem bookId={Number(id)}/>
+                            }
+                        }/>
+
+                    </Container>
+                </div>
+            </Router>
         );
     }
 };
